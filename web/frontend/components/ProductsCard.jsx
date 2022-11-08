@@ -5,6 +5,9 @@ import {
   TextContainer,
   DisplayText,
   TextStyle,
+  Frame,
+  Loading,
+  Thumbnail,
 } from '@shopify/polaris';
 import { Toast } from '@shopify/app-bridge-react';
 import { useAppQuery, useAuthenticatedFetch } from '../hooks';
@@ -15,10 +18,13 @@ export function ProductsCard() {
   const [toastProps, setToastProps] = useState(emptyToastProps);
   const fetch = useAuthenticatedFetch();
 
+  // productName should start as the product that was queried
+  const [productName, setProductName] = useState('Default Product Name');
+
   const {
     data,
     refetch: refetchProductCount,
-    isLoading: isLoadingCount,
+    isLoading: isLoadingProducts,
     isRefetching: isRefetchingCount,
   } = useAppQuery({
     url: '/api/products/get',
@@ -51,33 +57,43 @@ export function ProductsCard() {
   };
 
   return (
-    <>
-      {toastMarkup}
-      <Card
-        title='Product Counter'
-        sectioned
-        primaryFooterAction={{
-          content: 'Populate 5 products',
-          onAction: handlePopulate,
-          loading: isLoading,
-        }}
-      >
-        <TextContainer spacing='loose'>
-          <p>
-            Sample products are created with a default title and price. You can
-            remove them at any time.
-          </p>
+    <div style={{ height: '100px' }}>
+      <Frame>
+        {toastMarkup}
 
-          <Heading element='h4'>
-            TOTAL PRODUCTS
-            <DisplayText size='medium'>
-              <TextStyle variation='strong'>
-                {/* {isLoadingCount ? '-' : data.count}"-" */}
-              </TextStyle>
-            </DisplayText>
-          </Heading>
-        </TextContainer>
-      </Card>
-    </>
+        <Card
+          title='Change the Name of Your Products'
+          sectioned
+          primaryFooterAction={{
+            content: 'Populate 5 products',
+            onAction: handlePopulate,
+            loading: isLoading,
+          }}
+        >
+          <TextContainer spacing='loose'>
+            <div>
+              {isLoadingProducts ? (
+                <Loading />
+              ) : (
+                <>
+                  <h1>{productName}</h1>
+                  <Thumbnail
+                    source='https://burst.shopifycdn.com/photos/black-leather-choker-necklace_373x@2x.jpg'
+                    alt='Black choker necklace'
+                    size='large'
+                  />
+                  <input
+                    onChange={(e) => {
+                      setProductName(e.target.value);
+                      console.log(productName);
+                    }}
+                  ></input>
+                </>
+              )}
+            </div>
+          </TextContainer>
+        </Card>
+      </Frame>
+    </div>
   );
 }

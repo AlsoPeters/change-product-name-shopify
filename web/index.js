@@ -146,11 +146,11 @@ export async function createServer(
       if (error instanceof Shopify.Errors.GraphqlError) {
         console.log(error.response.errors[0].message);
       } else {
-        console.log(res.status(500).send(error));
+        return res.status(500), { error: 'Something went wrong...' };
       }
     }
-
-    return res.status(200).send({ products });
+    const data = products.body.data.products;
+    return res.status(200).send({ data });
   });
 
   app.get('/api/products/create', async (req, res) => {
