@@ -1,7 +1,7 @@
 // @ts-check
 import { join } from 'path';
 import { readFileSync } from 'fs';
-import express from 'express';
+import express, { response } from 'express';
 import cookieParser from 'cookie-parser';
 import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
 
@@ -153,28 +153,57 @@ export async function createServer(
     return res.status(200).send({ data });
   });
 
-  app.get('/api/products/create', async (req, res) => {
+  // All endpoints after this point will have access to a request.body
+  // attribute, as a result of the express.json() middleware
+  app.use(express.json());
+
+  app.post('/api/products/update', async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
       req,
       res,
       app.get('use-online-tokens')
     );
+
+    console.log('I got a request');
+    console.log(req.body.productData);
+    const client = new Shopify.Clients.Graphql(
+      session.shop,
+      session.accessToken
+    );
     let status = 200;
     let error = null;
 
     try {
-      await productCreator(session);
+      const response = await client.query({
+        data: {
+          query: `mutation UpdateProduct($id: ID!, $title: String!) {
+            productUpdate(input: {id: $id, title: $title}) {
+              product {
+                id
+                title
+                description
+              }
+              userErrors {
+                field
+                message
+              }
+            }
+          }`,
+          variables: {
+            id: req.body.productData.id,
+            title: req.body.productData.title,
+          },
+        },
+      });
+      console.log(response);
     } catch (e) {
-      console.log(`Failed to process products/create: ${e.message}`);
+      console.log(e.response.errors);
+      console.log(`Failed to process products/update: ${e.message}`);
       status = 500;
       error = e.message;
     }
     res.status(status).send({ success: status === 200, error });
   });
-
-  // All endpoints after this point will have access to a request.body
-  // attribute, as a result of the express.json() middleware
-  app.use(express.json());
 
   app.use((req, res, next) => {
     const shop = Shopify.Utils.sanitizeShop(req.query.shop);

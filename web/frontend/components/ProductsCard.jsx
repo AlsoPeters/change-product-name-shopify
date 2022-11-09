@@ -40,17 +40,30 @@ export function ProductsCard() {
     <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
   );
 
-  const handlePopulate = async () => {
+  const handleUpdate = async () => {
     setIsLoading(true);
-    const response = await fetch('/api/products/create');
+    let productData = {
+      id: data?.data?.edges[0]?.node?.id,
+      title: productName,
+    };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productData }),
+    };
 
+    const response = await fetch('/api/products/update', options);
+
+    console.log(await response.json());
     if (response.ok) {
       await refetchProductCount();
-      setToastProps({ content: '5 products created!' });
+      setToastProps({ content: 'Products updated!' });
     } else {
       setIsLoading(false);
       setToastProps({
-        content: 'There was an error creating products',
+        content: 'There was an error updating products',
         error: true,
       });
     }
@@ -65,8 +78,8 @@ export function ProductsCard() {
           title='Change the Name of Your Products'
           sectioned
           primaryFooterAction={{
-            content: 'Populate 5 products',
-            onAction: handlePopulate,
+            content: 'Upadate products',
+            onAction: handleUpdate,
             loading: isLoading,
           }}
         >
@@ -76,7 +89,7 @@ export function ProductsCard() {
                 <Loading />
               ) : (
                 <>
-                  <h1>{productName}</h1>
+                  <h1>{data.data.edges[0].node.title}</h1>
                   <Thumbnail
                     source='https://burst.shopifycdn.com/photos/black-leather-choker-necklace_373x@2x.jpg'
                     alt='Black choker necklace'
