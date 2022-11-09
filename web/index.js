@@ -172,8 +172,6 @@ export async function createServer(
       app.get('use-online-tokens')
     );
 
-    console.log('I got a request');
-    console.log(req.body.productData);
     const client = new Shopify.Clients.Graphql(
       session.shop,
       session.accessToken
@@ -203,7 +201,6 @@ export async function createServer(
           },
         },
       });
-      console.log(response);
     } catch (e) {
       console.log(e.response.errors);
       console.log(`Failed to process products/update: ${e.message}`);

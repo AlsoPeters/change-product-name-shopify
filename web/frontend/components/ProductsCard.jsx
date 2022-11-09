@@ -78,7 +78,7 @@ export function ProductsCard() {
           title='Change the Name of Your Products'
           sectioned
           primaryFooterAction={{
-            content: 'Upadate products',
+            content: 'Update products',
             onAction: handleUpdate,
             loading: isLoading,
           }}
@@ -92,7 +92,7 @@ export function ProductsCard() {
                   <h1>{data.data.edges[0].node.title}</h1>
                   <Thumbnail
                     source={data.data.edges[0].node.images.edges[0].node.url}
-                    alt='Black choker necklace'
+                    alt={data.data.edges[0].node.title}
                     size='large'
                   />
                   <input
