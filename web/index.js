@@ -133,6 +133,14 @@ export async function createServer(
                   id
                   title
                   description
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                        id
+                      }
+                    }
+                  }
                 }
               }
             }

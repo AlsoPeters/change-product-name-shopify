@@ -19,7 +19,7 @@ export function ProductsCard() {
   const fetch = useAuthenticatedFetch();
 
   // productName should start as the product that was queried
-  const [productName, setProductName] = useState('Default Product Name');
+  const [productName, setProductName] = useState('');
 
   const {
     data,
@@ -91,11 +91,12 @@ export function ProductsCard() {
                 <>
                   <h1>{data.data.edges[0].node.title}</h1>
                   <Thumbnail
-                    source='https://burst.shopifycdn.com/photos/black-leather-choker-necklace_373x@2x.jpg'
+                    source={data.data.edges[0].node.images.edges[0].node.url}
                     alt='Black choker necklace'
                     size='large'
                   />
                   <input
+                    placeholder={data.data.edges[0].node.title}
                     onChange={(e) => {
                       setProductName(e.target.value);
                       console.log(productName);
