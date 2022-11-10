@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import {
   Card,
-  Heading,
   TextContainer,
-  DisplayText,
-  TextStyle,
   Frame,
+  DisplayText,
   Loading,
+  Stack,
   Thumbnail,
+  TextField,
 } from '@shopify/polaris';
 import { Toast } from '@shopify/app-bridge-react';
 import { useAppQuery, useAuthenticatedFetch } from '../hooks';
@@ -18,7 +18,6 @@ export function ProductsCard() {
   const [toastProps, setToastProps] = useState(emptyToastProps);
   const fetch = useAuthenticatedFetch();
 
-  // productName should start as the product that was queried
   const [productName, setProductName] = useState('');
 
   const {
@@ -73,7 +72,6 @@ export function ProductsCard() {
     <div style={{ height: '100px' }}>
       <Frame>
         {toastMarkup}
-
         <Card
           title='Change the Name of Your Products'
           sectioned
@@ -89,19 +87,22 @@ export function ProductsCard() {
                 <Loading />
               ) : (
                 <>
-                  <h1>{data.data.edges[0].node.title}</h1>
-                  <Thumbnail
-                    source={data.data.edges[0].node.images.edges[0].node.url}
-                    alt={data.data.edges[0].node.title}
-                    size='large'
-                  />
-                  <input
-                    placeholder={data.data.edges[0].node.title}
-                    onChange={(e) => {
-                      setProductName(e.target.value);
-                      console.log(productName);
-                    }}
-                  ></input>
+                  <Stack vertical spacing='tight'>
+                    <DisplayText size='small'>
+                      {data.data.edges[0].node.title}
+                    </DisplayText>
+                    <Thumbnail
+                      source={data.data.edges[0].node.images.edges[0].node.url}
+                      alt={data.data.edges[0].node.title}
+                      size='large'
+                    />
+                    <TextField
+                      label='New product name'
+                      value={productName}
+                      onChange={(value) => setProductName(value)}
+                      autoComplete='off'
+                    />
+                  </Stack>
                 </>
               )}
             </div>
