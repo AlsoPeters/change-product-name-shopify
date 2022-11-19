@@ -7,7 +7,7 @@ processes = []
 
 [env]
   PORT = "8081"
-  HOST = "https://my-app.fly.dev"
+  HOST = "https://change-product-name-shopify.fly.dev/"
   SHOPIFY_API_KEY = "c3aff4d0e05608216a274ec3fe82ee0d"
   SCOPES = "write_products"
 [experimental]
